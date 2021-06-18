@@ -1,0 +1,38 @@
+#include "sys.h"
+#include "delay.h"
+#include "usart.h"
+#include "led.h"
+#include "sys.h"
+#include "myiic.h"
+
+
+int main(void)
+{
+	int second,minute,hour,week,day,month,year,a,temp;
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
+	delay_init(168);    //初始化延时函数
+	uart_init(9600);	//初始化串口波特率为115200
+	 IIC_Init();			//IIC初始化 
+	 Write1307(0x00,0x0B);
+	 Write1307(0x01,0x05);
+	 Write1307(0x02,0x08);
+	 Write1307(0x03,0x02);
+	 Write1307(0x04,0x11);
+	 Write1307(0x05,0x0A);
+	 Write1307(0x06,0x10);
+ 	while(1)//检测不到24c02
+	{
+		second=Read1307(0x00);
+		minute=Read1307(0x01);
+		hour=Read1307(0x02);
+		week=Read1307(0x03);
+		day=Read1307(0x04);
+		month=Read1307(0x05);
+		year=Read1307(0x06);
+	  printf("20%d年%d月%d日，星期%d",year,month,day,week);
+		printf("\r\n");
+		printf("%d:%d:%d",hour,minute,second);
+		printf("\r\n");
+		delay_ms(1000);
+	}
+}
